@@ -1,5 +1,5 @@
 {
-  "name": "express-boilerplate",
+  "name": "graphql-jwt-auth-boilerplate",
   "version": "1.0.0",
   "description": "",
   "main": "build/index.js",
@@ -11,21 +11,36 @@
     "test:unit": "mocha --recursive -r tsconfig-paths/register -r ts-node/register -r source-map-support/register src/**/*.spec.ts",
     "test:lint": "eslint --ext .ts ./src",
     "test:lint:fix": "npm run test:lint -- --fix",
-    "test": "npm run test:lint && npm run test:unit"
+    "test": "npm run test:lint && npm run test:unit",
+    "codegen": "graphql-codegen --config codegen.yml"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "apollo-server-express": "^2.9.4",
+    "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
-    "express": "^4.17.1"
+    "cookie-parser": "^1.4.4",
+    "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
+    "schemat": "^1.2.0"
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "^1.7.0",
+    "@graphql-codegen/introspection": "^1.7.0",
+    "@graphql-codegen/typescript": "1.7.0",
+    "@graphql-codegen/typescript-resolvers": "^1.7.0",
+    "@types/bcryptjs": "^2.4.2",
     "@types/body-parser": "^1.17.1",
     "@types/chai": "^4.2.3",
+    "@types/cookie-parser": "^1.4.2",
     "@types/dotenv": "^6.1.1",
     "@types/express": "^4.17.1",
+    "@types/jsonwebtoken": "^8.3.4",
     "@types/mocha": "^5.2.7",
+    "@types/mongodb-memory-server": "^1.8.0",
+    "@types/mongoose": "^5.5.18",
     "@types/supertest": "^2.0.8",
     "@typescript-eslint/eslint-plugin": "^2.3.0",
     "@typescript-eslint/parser": "^2.3.0",
@@ -34,7 +49,10 @@
     "eslint": "^6.4.0",
     "eslint-config-prettier": "^6.3.0",
     "eslint-plugin-prettier": "^3.1.1",
+    "graphql": "^14.5.8",
     "mocha": "^6.2.0",
+    "mongodb-memory-server": "^5.2.5",
+    "mongoose": "^5.7.1",
     "nodemon": "^1.19.2",
     "prettier": "^1.18.2",
     "supertest": "^4.0.2",
@@ -51,7 +69,7 @@
     "watch": [
       "src"
     ],
-    "exec": "npm run start:dev",
+    "exec": "npm run codegen && npm run start:dev",
     "ext": "ts"
   }
 }
