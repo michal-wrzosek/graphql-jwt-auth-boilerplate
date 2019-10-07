@@ -1,7 +1,7 @@
 import { AuthenticationError, UserInputError } from 'apollo-server-core';
 import { createVadidator } from 'schemat';
 
-import { ApolloContextType } from 'src/types/ApolloContextType';
+import { ApolloContextType } from 'src/util/context';
 import { Resolvers } from 'src/generated/graphql';
 import { ERRORS_ENUM } from 'src/types/ErrorsEnum';
 import { requiredValidator } from 'src/validators/requiredValidator';

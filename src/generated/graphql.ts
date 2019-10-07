@@ -23,8 +23,14 @@ export type CreatePostInput = {
 };
 
 export type GetPostsInput = {
-  isPublished?: Maybe<Scalars['Boolean']>,
+  isPublished?: Maybe<GetPostsIsPublished>,
 };
+
+export enum GetPostsIsPublished {
+  All = 'ALL',
+  Published = 'PUBLISHED',
+  NotPublished = 'NOT_PUBLISHED'
+}
 
 export type LoginInput = {
   email: Scalars['String'],
@@ -62,7 +68,6 @@ export type MutationLoginArgs = {
 
 
 export type MutationCreatePostArgs = {
-  accessToken: Scalars['String'],
   createPostInput: CreatePostInput
 };
 
@@ -72,23 +77,24 @@ export type Post = {
   title: Scalars['String'],
   body: Scalars['String'],
   isPublished: Scalars['Boolean'],
+  author: User,
 };
 
 export type Query = {
    __typename?: 'Query',
   me: MePayload,
   getPosts: Array<Post>,
-};
-
-
-export type QueryMeArgs = {
-  accessToken: Scalars['String']
+  getPost: Post,
 };
 
 
 export type QueryGetPostsArgs = {
-  accessToken: Scalars['String'],
   getPostsInput?: Maybe<GetPostsInput>
+};
+
+
+export type QueryGetPostArgs = {
+  _id: Scalars['ID']
 };
 
 export type RefreshTokenPayload = {
@@ -185,14 +191,15 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
   Query: ResolverTypeWrapper<{}>,
-  String: ResolverTypeWrapper<Scalars['String']>,
   MePayload: ResolverTypeWrapper<MePayload>,
   User: ResolverTypeWrapper<User>,
+  String: ResolverTypeWrapper<Scalars['String']>,
   UserRole: UserRole,
   GetPostsInput: GetPostsInput,
-  Boolean: ResolverTypeWrapper<Scalars['Boolean']>,
+  GetPostsIsPublished: GetPostsIsPublished,
   Post: ResolverTypeWrapper<Post>,
   ID: ResolverTypeWrapper<Scalars['ID']>,
+  Boolean: ResolverTypeWrapper<Scalars['Boolean']>,
   Mutation: ResolverTypeWrapper<{}>,
   RegisterInput: RegisterInput,
   LoginInput: LoginInput,
@@ -206,14 +213,15 @@ export type ResolversTypes = {
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
   Query: {},
-  String: Scalars['String'],
   MePayload: MePayload,
   User: User,
+  String: Scalars['String'],
   UserRole: UserRole,
   GetPostsInput: GetPostsInput,
-  Boolean: Scalars['Boolean'],
+  GetPostsIsPublished: GetPostsIsPublished,
   Post: Post,
   ID: Scalars['ID'],
+  Boolean: Scalars['Boolean'],
   Mutation: {},
   RegisterInput: RegisterInput,
   LoginInput: LoginInput,
@@ -242,7 +250,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   register?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, MutationRegisterArgs>,
   login?: Resolver<ResolversTypes['LoginPayload'], ParentType, ContextType, MutationLoginArgs>,
   refreshToken?: Resolver<ResolversTypes['RefreshTokenPayload'], ParentType, ContextType>,
-  createPost?: Resolver<ResolversTypes['Post'], ParentType, ContextType, RequireFields<MutationCreatePostArgs, 'accessToken' | 'createPostInput'>>,
+  createPost?: Resolver<ResolversTypes['Post'], ParentType, ContextType, RequireFields<MutationCreatePostArgs, 'createPostInput'>>,
 };
 
 export type PostResolvers<ContextType = any, ParentType extends ResolversParentTypes['Post'] = ResolversParentTypes['Post']> = {
@@ -250,11 +258,13 @@ export type PostResolvers<ContextType = any, ParentType extends ResolversParentT
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
   body?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
   isPublished?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>,
+  author?: Resolver<ResolversTypes['User'], ParentType, ContextType>,
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
-  me?: Resolver<ResolversTypes['MePayload'], ParentType, ContextType, RequireFields<QueryMeArgs, 'accessToken'>>,
-  getPosts?: Resolver<Array<ResolversTypes['Post']>, ParentType, ContextType, RequireFields<QueryGetPostsArgs, 'accessToken'>>,
+  me?: Resolver<ResolversTypes['MePayload'], ParentType, ContextType>,
+  getPosts?: Resolver<Array<ResolversTypes['Post']>, ParentType, ContextType, QueryGetPostsArgs>,
+  getPost?: Resolver<ResolversTypes['Post'], ParentType, ContextType, RequireFields<QueryGetPostArgs, '_id'>>,
 };
 
 export type RefreshTokenPayloadResolvers<ContextType = any, ParentType extends ResolversParentTypes['RefreshTokenPayload'] = ResolversParentTypes['RefreshTokenPayload']> = {

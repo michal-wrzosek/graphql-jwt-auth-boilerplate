@@ -4,13 +4,15 @@ import bodyParser from 'body-parser';
 import { ApolloServer, gql } from 'apollo-server-express';
 
 import { Resolvers } from 'src/generated/graphql';
-import { ApolloContextType } from './types/ApolloContextType';
 import { register } from 'src/resolvers/register';
 import { login } from './resolvers/login';
 import { me } from './resolvers/me';
 import { refreshToken } from './resolvers/refreshToken';
 import { createPost } from './resolvers/posts/createPost';
 import { getPosts } from './resolvers/posts/getPosts';
+import { author } from './resolvers/posts/author';
+import { ApolloContextType, context } from './util/context';
+import { getPost } from './resolvers/posts/getPost';
 
 const typeDefs = gql`
   enum UserRole {
@@ -29,6 +31,7 @@ const typeDefs = gql`
     title: String!
     body: String!
     isPublished: Boolean!
+    author: User!
   }
 
   type AccessTToken {
@@ -66,20 +69,27 @@ const typeDefs = gql`
     accessToken: AccessTToken!
   }
 
+  enum GetPostsIsPublished {
+    ALL
+    PUBLISHED
+    NOT_PUBLISHED
+  }
+
   input GetPostsInput {
-    isPublished: Boolean
+    isPublished: GetPostsIsPublished
   }
 
   type Query {
-    me(accessToken: String!): MePayload!
-    getPosts(accessToken: String!, getPostsInput: GetPostsInput): [Post!]!
+    me: MePayload!
+    getPosts(getPostsInput: GetPostsInput): [Post!]!
+    getPost(_id: ID!): Post!
   }
 
   type Mutation {
     register(registerInput: RegisterInput): Boolean
     login(loginInput: LoginInput): LoginPayload!
     refreshToken: RefreshTokenPayload!
-    createPost(accessToken: String!, createPostInput: CreatePostInput!): Post!
+    createPost(createPostInput: CreatePostInput!): Post!
   }
 `;
 
@@ -89,6 +99,7 @@ const resolvers: Resolvers<ApolloContextType> = {
   Query: {
     me,
     getPosts,
+    getPost,
   },
   Mutation: {
     register,
@@ -96,13 +107,16 @@ const resolvers: Resolvers<ApolloContextType> = {
     refreshToken,
     createPost,
   },
+  Post: {
+    author,
+  },
 };
 
 export const getApp = () => {
   const server = new ApolloServer({
     typeDefs,
     resolvers,
-    context: ({ req, res }): ApolloContextType => ({ req, res }),
+    context,
   });
   const app = express();
   app.use(cookieParser());

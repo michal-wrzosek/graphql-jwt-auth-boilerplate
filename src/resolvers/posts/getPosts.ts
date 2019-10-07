@@ -1,23 +1,32 @@
 import { ForbiddenError } from 'apollo-server-core';
 
-import { Resolvers, UserRole } from 'src/generated/graphql';
+import { Resolvers, UserRole, GetPostsIsPublished } from 'src/generated/graphql';
 import { ERRORS_ENUM } from 'src/types/ErrorsEnum';
-import { getAuthenticatedUser } from 'src/util/getAuthenticatedUser';
 import Post from 'src/models/post';
+import { ApolloContextType } from 'src/util/context';
 
-export const getPosts: Resolvers['Query']['getPosts'] = async (_, { accessToken, getPostsInput }) => {
-  const user = await getAuthenticatedUser(accessToken);
-
+export const getPosts: Resolvers<ApolloContextType>['Query']['getPosts'] = async (_, { getPostsInput }, { user }) => {
   let searchConditions = { isPublished: true };
 
-  if (getPostsInput && typeof getPostsInput.isPublished !== 'undefined') {
-    if (![UserRole.Internal, UserRole.Admin].includes(user.role))
-      throw new ForbiddenError(ERRORS_ENUM.AUTHORIZATION_ERROR);
+  if (getPostsInput) {
+    if (getPostsInput.isPublished === GetPostsIsPublished.NotPublished) {
+      if (!user) throw new ForbiddenError(ERRORS_ENUM.AUTHORIZATION_ERROR);
+      if (![UserRole.Internal, UserRole.Admin].includes(user.role))
+        throw new ForbiddenError(ERRORS_ENUM.AUTHORIZATION_ERROR);
 
-    searchConditions = { isPublished: getPostsInput.isPublished };
+      searchConditions = { ...searchConditions, isPublished: false };
+    }
+
+    if (getPostsInput.isPublished === GetPostsIsPublished.All) {
+      if (!user) throw new ForbiddenError(ERRORS_ENUM.AUTHORIZATION_ERROR);
+      if (![UserRole.Internal, UserRole.Admin].includes(user.role))
+        throw new ForbiddenError(ERRORS_ENUM.AUTHORIZATION_ERROR);
+
+      delete searchConditions.isPublished;
+    }
   }
 
   const posts = await Post.find(searchConditions);
 
-  return posts;
+  return posts.map(post => post.toObject());
 };

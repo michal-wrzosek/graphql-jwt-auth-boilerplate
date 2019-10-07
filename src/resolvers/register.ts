@@ -2,11 +2,11 @@ import { UserInputError } from 'apollo-server-core';
 import { createVadidator } from 'schemat';
 
 import { Resolvers } from 'src/generated/graphql';
-import { ApolloContextType } from 'src/types/ApolloContextType';
 import { ERRORS_ENUM } from 'src/types/ErrorsEnum';
 import User from 'src/models/user';
 import { emailValidator } from 'src/validators/emailValidator';
 import { passwordValidator } from 'src/validators/passwordValidator';
+import { ApolloContextType } from 'src/util/context';
 
 const registerValidator = createVadidator({
   email: emailValidator,
