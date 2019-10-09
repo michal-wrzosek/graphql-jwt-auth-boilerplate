@@ -54,6 +54,8 @@ export type Mutation = {
   login: LoginPayload,
   refreshToken: RefreshTokenPayload,
   createPost: Post,
+  updatePost: Post,
+  deletePost?: Maybe<Scalars['Boolean']>,
 };
 
 
@@ -69,6 +71,17 @@ export type MutationLoginArgs = {
 
 export type MutationCreatePostArgs = {
   createPostInput: CreatePostInput
+};
+
+
+export type MutationUpdatePostArgs = {
+  _id: Scalars['ID'],
+  updatePostInput: UpdatePostInput
+};
+
+
+export type MutationDeletePostArgs = {
+  _id: Scalars['ID']
 };
 
 export type Post = {
@@ -106,6 +119,12 @@ export type RefreshTokenPayload = {
 export type RegisterInput = {
   email: Scalars['String'],
   password: Scalars['String'],
+};
+
+export type UpdatePostInput = {
+  title?: Maybe<Scalars['String']>,
+  body?: Maybe<Scalars['String']>,
+  isPublished?: Maybe<Scalars['Boolean']>,
 };
 
 export type User = {
@@ -208,6 +227,7 @@ export type ResolversTypes = {
   Int: ResolverTypeWrapper<Scalars['Int']>,
   RefreshTokenPayload: ResolverTypeWrapper<RefreshTokenPayload>,
   CreatePostInput: CreatePostInput,
+  UpdatePostInput: UpdatePostInput,
 };
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -230,6 +250,7 @@ export type ResolversParentTypes = {
   Int: Scalars['Int'],
   RefreshTokenPayload: RefreshTokenPayload,
   CreatePostInput: CreatePostInput,
+  UpdatePostInput: UpdatePostInput,
 };
 
 export type AccessTTokenResolvers<ContextType = any, ParentType extends ResolversParentTypes['AccessTToken'] = ResolversParentTypes['AccessTToken']> = {
@@ -251,6 +272,8 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   login?: Resolver<ResolversTypes['LoginPayload'], ParentType, ContextType, MutationLoginArgs>,
   refreshToken?: Resolver<ResolversTypes['RefreshTokenPayload'], ParentType, ContextType>,
   createPost?: Resolver<ResolversTypes['Post'], ParentType, ContextType, RequireFields<MutationCreatePostArgs, 'createPostInput'>>,
+  updatePost?: Resolver<ResolversTypes['Post'], ParentType, ContextType, RequireFields<MutationUpdatePostArgs, '_id' | 'updatePostInput'>>,
+  deletePost?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MutationDeletePostArgs, '_id'>>,
 };
 
 export type PostResolvers<ContextType = any, ParentType extends ResolversParentTypes['Post'] = ResolversParentTypes['Post']> = {

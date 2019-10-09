@@ -12,14 +12,16 @@ const getPostValidation = createVadidator({
   _id: [requiredValidator, minStringValidator(1)],
 });
 
-export const getPost: Resolvers<ApolloContextType>['Query']['getPost'] = async (_, input, { userCan }) => {
+export const deletePost: Resolvers<ApolloContextType>['Mutation']['deletePost'] = async (_, input, { userCan }) => {
   const validationErrors = getPostValidation(input);
   if (validationErrors) throw new UserInputError(ERRORS_ENUM.VALIDATION_ERROR, { validationErrors });
 
   const post = await Post.findById(input._id);
   if (!post) throw new UserInputError(ERRORS_ENUM.VALIDATION_ERROR_NO_SUCH_RECORD);
 
-  if (!userCan.getPost(post)) throw new ForbiddenError(ERRORS_ENUM.AUTHORIZATION_ERROR);
+  if (!userCan.deletePost(post)) throw new ForbiddenError(ERRORS_ENUM.AUTHORIZATION_ERROR);
 
-  return post.toObject();
+  await Post.findByIdAndRemove(input._id);
+
+  return null;
 };

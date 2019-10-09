@@ -13,6 +13,8 @@ import { getPosts } from './resolvers/posts/getPosts';
 import { author } from './resolvers/posts/author';
 import { ApolloContextType, context } from './util/context';
 import { getPost } from './resolvers/posts/getPost';
+import { updatePost } from './resolvers/posts/updatePost';
+import { deletePost } from './resolvers/posts/deletePost';
 
 const typeDefs = gql`
   enum UserRole {
@@ -53,12 +55,6 @@ const typeDefs = gql`
     password: String!
   }
 
-  input CreatePostInput {
-    title: String!
-    body: String!
-    isPublished: Boolean
-  }
-
   type LoginPayload {
     user: User!
     accessToken: AccessTToken!
@@ -79,8 +75,22 @@ const typeDefs = gql`
     isPublished: GetPostsIsPublished
   }
 
+  input CreatePostInput {
+    title: String!
+    body: String!
+    isPublished: Boolean
+  }
+
+  input UpdatePostInput {
+    title: String
+    body: String
+    isPublished: Boolean
+  }
+
   type Query {
     me: MePayload!
+
+    # Posts
     getPosts(getPostsInput: GetPostsInput): [Post!]!
     getPost(_id: ID!): Post!
   }
@@ -89,7 +99,11 @@ const typeDefs = gql`
     register(registerInput: RegisterInput): Boolean
     login(loginInput: LoginInput): LoginPayload!
     refreshToken: RefreshTokenPayload!
+
+    # Posts
     createPost(createPostInput: CreatePostInput!): Post!
+    updatePost(_id: ID!, updatePostInput: UpdatePostInput!): Post!
+    deletePost(_id: ID!): Boolean
   }
 `;
 
@@ -105,7 +119,11 @@ const resolvers: Resolvers<ApolloContextType> = {
     register,
     login,
     refreshToken,
+
+    // Posts
     createPost,
+    updatePost,
+    deletePost,
   },
   Post: {
     author,

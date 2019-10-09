@@ -18,9 +18,9 @@ const createPostValidator = createVadidator({
 export const createPost: Resolvers<ApolloContextType>['Mutation']['createPost'] = async (
   _,
   { createPostInput },
-  { user },
+  { user, userCan },
 ) => {
-  if (!user) throw new ForbiddenError(ERRORS_ENUM.AUTHORIZATION_ERROR);
+  if (!userCan.createPost()) throw new ForbiddenError(ERRORS_ENUM.AUTHORIZATION_ERROR);
 
   const validationErrors = createPostValidator(createPostInput);
   if (validationErrors) throw new UserInputError(ERRORS_ENUM.VALIDATION_ERROR, { validationErrors });
