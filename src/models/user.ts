@@ -6,6 +6,7 @@ export interface UserProps {
   email: string;
   password: string;
   role: UserRole;
+  isActive: boolean;
 }
 
 export interface UserModelProps extends UserProps, Document {
@@ -23,6 +24,7 @@ const userSchema: Schema = new Schema({
     enum: [UserRole.Client, UserRole.Internal, UserRole.Admin],
     default: UserRole.Client,
   },
+  isActive: { type: Schema.Types.Boolean, required: true, default: true },
 });
 
 userSchema.pre<UserModelProps>('save', function(next) {

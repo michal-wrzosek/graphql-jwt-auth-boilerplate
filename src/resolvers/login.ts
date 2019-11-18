@@ -45,6 +45,7 @@ export const login: Resolvers<ApolloContextType>['Mutation']['login'] = async (_
     user: {
       email: user.email,
       role: user.role,
+      isActive: user.isActive,
     },
     accessToken: {
       token,

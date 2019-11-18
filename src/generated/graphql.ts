@@ -33,7 +33,7 @@ export enum GetPostsIsPublished {
 }
 
 export type LoginInput = {
-  email: Scalars['String'],
+  email: Scalars['ID'],
   password: Scalars['String'],
 };
 
@@ -96,8 +96,15 @@ export type Post = {
 export type Query = {
    __typename?: 'Query',
   me: MePayload,
+  getUser: User,
+  getUsers: Array<User>,
   getPosts: Array<Post>,
   getPost: Post,
+};
+
+
+export type QueryGetUserArgs = {
+  email: Scalars['ID']
 };
 
 
@@ -117,7 +124,7 @@ export type RefreshTokenPayload = {
 };
 
 export type RegisterInput = {
-  email: Scalars['String'],
+  email: Scalars['ID'],
   password: Scalars['String'],
 };
 
@@ -129,8 +136,9 @@ export type UpdatePostInput = {
 
 export type User = {
    __typename?: 'User',
-  email: Scalars['String'],
+  email: Scalars['ID'],
   role: UserRole,
+  isActive: Scalars['Boolean'],
 };
 
 export enum UserRole {
@@ -212,13 +220,13 @@ export type ResolversTypes = {
   Query: ResolverTypeWrapper<{}>,
   MePayload: ResolverTypeWrapper<MePayload>,
   User: ResolverTypeWrapper<User>,
-  String: ResolverTypeWrapper<Scalars['String']>,
+  ID: ResolverTypeWrapper<Scalars['ID']>,
   UserRole: UserRole,
+  Boolean: ResolverTypeWrapper<Scalars['Boolean']>,
   GetPostsInput: GetPostsInput,
   GetPostsIsPublished: GetPostsIsPublished,
   Post: ResolverTypeWrapper<Post>,
-  ID: ResolverTypeWrapper<Scalars['ID']>,
-  Boolean: ResolverTypeWrapper<Scalars['Boolean']>,
+  String: ResolverTypeWrapper<Scalars['String']>,
   Mutation: ResolverTypeWrapper<{}>,
   RegisterInput: RegisterInput,
   LoginInput: LoginInput,
@@ -235,13 +243,13 @@ export type ResolversParentTypes = {
   Query: {},
   MePayload: MePayload,
   User: User,
-  String: Scalars['String'],
+  ID: Scalars['ID'],
   UserRole: UserRole,
+  Boolean: Scalars['Boolean'],
   GetPostsInput: GetPostsInput,
   GetPostsIsPublished: GetPostsIsPublished,
   Post: Post,
-  ID: Scalars['ID'],
-  Boolean: Scalars['Boolean'],
+  String: Scalars['String'],
   Mutation: {},
   RegisterInput: RegisterInput,
   LoginInput: LoginInput,
@@ -286,6 +294,8 @@ export type PostResolvers<ContextType = any, ParentType extends ResolversParentT
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   me?: Resolver<ResolversTypes['MePayload'], ParentType, ContextType>,
+  getUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<QueryGetUserArgs, 'email'>>,
+  getUsers?: Resolver<Array<ResolversTypes['User']>, ParentType, ContextType>,
   getPosts?: Resolver<Array<ResolversTypes['Post']>, ParentType, ContextType, QueryGetPostsArgs>,
   getPost?: Resolver<ResolversTypes['Post'], ParentType, ContextType, RequireFields<QueryGetPostArgs, '_id'>>,
 };
@@ -296,8 +306,9 @@ export type RefreshTokenPayloadResolvers<ContextType = any, ParentType extends R
 };
 
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
-  email?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
+  email?: Resolver<ResolversTypes['ID'], ParentType, ContextType>,
   role?: Resolver<ResolversTypes['UserRole'], ParentType, ContextType>,
+  isActive?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>,
 };
 
 export type Resolvers<ContextType = any> = {

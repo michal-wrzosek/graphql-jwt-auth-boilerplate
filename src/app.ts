@@ -15,6 +15,8 @@ import { ApolloContextType, context } from './util/context';
 import { getPost } from './resolvers/posts/getPost';
 import { updatePost } from './resolvers/posts/updatePost';
 import { deletePost } from './resolvers/posts/deletePost';
+import { getUser } from './resolvers/users/getUser';
+import { getUsers } from './resolvers/users/getUsers';
 
 const typeDefs = gql`
   enum UserRole {
@@ -24,8 +26,9 @@ const typeDefs = gql`
   }
 
   type User {
-    email: String!
+    email: ID!
     role: UserRole!
+    isActive: Boolean!
   }
 
   type Post {
@@ -46,12 +49,12 @@ const typeDefs = gql`
   }
 
   input RegisterInput {
-    email: String!
+    email: ID!
     password: String!
   }
 
   input LoginInput {
-    email: String!
+    email: ID!
     password: String!
   }
 
@@ -90,6 +93,10 @@ const typeDefs = gql`
   type Query {
     me: MePayload!
 
+    # Users
+    getUser(email: ID!): User!
+    getUsers: [User!]!
+
     # Posts
     getPosts(getPostsInput: GetPostsInput): [Post!]!
     getPost(_id: ID!): Post!
@@ -112,6 +119,12 @@ export const PASSWORD_MIN_LENGTH = 6;
 const resolvers: Resolvers<ApolloContextType> = {
   Query: {
     me,
+
+    // Users
+    getUser,
+    getUsers,
+
+    // Posts
     getPosts,
     getPost,
   },

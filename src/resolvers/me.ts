@@ -10,6 +10,7 @@ export const me: Resolvers<ApolloContextType>['Query']['me'] = async (_, __, { u
     user: {
       email: user.email,
       role: user.role,
+      isActive: user.isActive,
     },
   };
 };

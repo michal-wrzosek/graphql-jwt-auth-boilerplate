@@ -33,6 +33,7 @@ export const refreshToken: Resolvers['Mutation']['refreshToken'] = async (_, __,
     user: {
       email: user.email,
       role: user.role,
+      isActive: user.isActive,
     },
     accessToken: {
       token,

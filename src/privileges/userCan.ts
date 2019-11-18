@@ -3,6 +3,8 @@ import { UserRole } from 'src/generated/graphql';
 import { PostModelProps } from 'src/models/post';
 
 export type UserCanPayload = {
+  getUser(): boolean;
+  getUsers(): boolean;
   getUnpublishedPosts(): boolean;
   createPost(): boolean;
   getPost(post: PostModelProps): boolean;
@@ -11,11 +13,21 @@ export type UserCanPayload = {
 };
 
 export function userCan(user: UserModelProps | undefined): UserCanPayload {
+  function canManageUsers() {
+    return user && [UserRole.Admin].includes(user.role);
+  }
+
   function canManagePosts() {
     return user && [UserRole.Internal, UserRole.Admin].includes(user.role);
   }
 
   return {
+    getUser() {
+      return canManageUsers();
+    },
+    getUsers() {
+      return canManageUsers();
+    },
     getUnpublishedPosts() {
       return canManagePosts();
     },
